@@ -1,23 +1,12 @@
+@import 'node_modules/swiper/swiper-bundle';
+
 @import 'normilize/normilize';
 @import 'normilize/reset';
 @import "mixin/fonts";
 @import "fonts";
 
-body {
-    font-size: 16px;
-    line-height: 1.4;
-    display: flex;
-    padding: 0px 0px;
-    margin: 0px 0px;
-}
+@import "setting/global";
+@import "setting/variables";
 
-* {
-    box-sizing: border-box;
-}
-
-.container {
-    width: 1230px;
-    margin: 0px auto;
-    font-size: 16px;
-    position: relative;
-}
+@import "elements/g-slider";
+@import "elements/popup-slider";

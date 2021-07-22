@@ -1,1 +1,1 @@
-@@include('plugins/webp.js');
+@@include('sliders/g-slider.js');

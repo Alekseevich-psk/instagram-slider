@@ -4,7 +4,7 @@ let source_flr = "app";
 let baseDir = "./" + project_flr + "/";
 let fs = require('fs');
 
-// main path
+// main path app/images/var_1-big.jpeg
 let path = {
     build: {
         html: project_flr + "/",
@@ -19,7 +19,7 @@ let path = {
         html: source_flr + "/html/*.html",
         css: source_flr + "/scss/style.scss",
         js: source_flr + "/scripts/main.js",
-        img: source_flr + "/images/**/*.{jpg,png,svg,gif,ico,webp}",
+        img: source_flr + "/images/**/*.{jpg,jpeg,png,svg,gif,ico,webp}",
         fonts: source_flr + "/fonts/*.{otf,woff2,woff}",
         svg: source_flr + "/html/svg/*.svg"
     },
@@ -28,7 +28,7 @@ let path = {
         css: source_flr + "/scss/**/*.scss",
         js: source_flr + "/scripts/**/*.js",
         libs: source_flr + "/libs/**/*.{js}",
-        img: source_flr + "/images/**/*.{jpg,png,svg,gif,ico,webp}",
+        img: source_flr + "/images/**/*.{jpg,jpeg,png,svg,gif,ico,webp}",
         svg: source_flr + "/html/svg/*.svg"
     },
     clean: baseDir,

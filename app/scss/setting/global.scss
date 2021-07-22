@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: roboto, Verdana, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.4;
+    padding: 0px 0px;
+    margin: 0px 0px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    margin: 0px auto;
+    width: 1230px;
+    font-size: 16px;
+    position: relative;
+}
