@@ -3,14 +3,12 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 4;
+    z-index: 3;
     width: 100%;
     height: 100%;
-    color: #000;
-    border: 1px solid black;
-    background-color: rgba(0, 0, 0, 0.5);
     visibility: hidden;
     opacity: 0;
+    background-color: rgba(0, 0, 0, 0.5);
 
     &__close {
         position: fixed;
@@ -37,22 +35,113 @@
     }
 
     &__slide {
-        height: 80vh;
+        // max-height: 78.5vh;
         transition: 0.2s;
+        z-index: 3;
+    }
 
+    &__preview{
         img {
+            display: block;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
         }
     }
 
-    .swiper-slide-active {
-        height: 90vh;
-        margin-top: -5vh;
+    &__slide-btn {
+        background-color: rgb(73, 7, 158);
+        display: block;
+        position: absolute;
+        bottom: 2%;
+        left: 15%;
+        padding: 12px;
+        width: 70%;
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+
+        &:hover {
+            background-color: rgb(83, 6, 184);
+        }
+
+        &:active {
+            background-color: rgb(52, 4, 114);
+        }
     }
 
-    .swiper-slide-next, .swiper-slide-prev {
+    &__progress-bar{
+        display: flex;
+        position: absolute;
+        top: 3%;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        padding: 0 6px;
+    }
+
+    &__progress-wrap {
+        border: 1px solid #fff;
+        height: 1px;
+        margin-right: 6px;
+        flex-grow: 1;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    &__progress-item {
+        display: block;
+        width: 100%;
+        background-color: #fff;
+    }
+
+    &__sub-slide {
+        display: none;
+    }
+
+    &__nav {
+        cursor: pointer;
+        position: absolute;
+        z-index: 6;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        background-color: transparent;
+    }
+
+    &__nav-prev {
+        left: 0;
+    }
+
+    &__nav-next {
+        right: 0;
+    }
+
+    .swiper-scrollbar{
+        background-color: rgba(255, 255, 255, 0.212);
+        top: 7px;
+
+        .swiper-scrollbar-drag {
+            background-color: #fff;
+            width: 0;
+        }
+    }
+
+    .show-picture {
+        display: block;
+    }
+
+    .swiper-slide-active {
+        // height: 88vh;
+        transform: scale(1.1);
+    }
+
+    .swiper-slide-next,
+    .swiper-slide-prev {
         cursor: pointer;
     }
 }

@@ -1,17 +1,12 @@
 "use strict";
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 var elemSlideTarget = document.querySelectorAll('.g-slider__slide');
 var closePopupSlider = document.querySelector('.popup-slider__close');
 var popupSliderBlock = document.querySelector('.popup-slider');
 var popupSliderWrap = document.querySelector('.popup-slider__wrap');
 var gSlider = new Swiper('.g-slider__container', {
   slidesPerView: 7,
+  slideToClickedSlide: true,
   spaceBetween: 30,
   navigation: {
     nextEl: ".g-slider__arrow-next",
@@ -19,72 +14,128 @@ var gSlider = new Swiper('.g-slider__container', {
   }
 });
 var popupSlider = new Swiper('.popup-slider__container', {
-  slidesPerView: 3,
   slideToClickedSlide: true,
-  spaceBetween: 60,
   centeredSlides: true,
-  navigation: {
-    nextEl: ".popup-slider__arrow-next",
-    prevEl: ".popup-slider__arrow-prev"
+  breakpoints: {
+    320: {
+      slidesPerView: 1.8,
+      spaceBetween: 20
+    },
+    480: {
+      slidesPerView: 3,
+      spaceBetween: 30
+    },
+    960: {
+      slidesPerView: 3,
+      spaceBetween: 160
+    }
   }
 });
-
-if (elemSlideTarget.length != 0) {
-  var _iterator = _createForOfIteratorHelper(elemSlideTarget),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var elem = _step.value;
-      elem.addEventListener('click', function () {
-        var images = getImagesForSlider(this);
-
-        if (images.length != 0) {
-          setImagesForSlider(images, popupSliderWrap);
-          updateSlider(popupSlider);
-          showSlider(popupSliderBlock);
-        }
-      });
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-}
 
 if (closePopupSlider) {
   closePopupSlider.addEventListener('click', function () {
     hideSlider(popupSliderBlock);
-    removeChild(popupSliderWrap);
+    deleteSlider(popupSlider.slides[popupSlider.activeIndex]);
   });
 }
 
-function getImagesForSlider(elem) {
-  return elem.querySelectorAll('.g-slider__hide-wrap img');
-}
+if (elemSlideTarget.length != 0) {
+  elemSlideTarget.forEach(function (elem) {
+    var elemChildPreview = elem.querySelector('.g-slider__preview');
 
-function setImagesForSlider(arr, parent) {
-  var _iterator2 = _createForOfIteratorHelper(arr),
-      _step2;
-
-  try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var _elem = _step2.value;
-      var item = createElement('div', 'popup-slider__slide', 'swiper-slide');
-      item.appendChild(_elem.cloneNode(true));
-      parent.appendChild(item);
+    if (elemChildPreview) {
+      createPreviewSlide(elemChildPreview);
     }
-  } catch (err) {
-    _iterator2.e(err);
-  } finally {
-    _iterator2.f();
-  }
+
+    elem.addEventListener('click', function () {
+      popupSlider.activeIndex = gSlider.activeIndex;
+      popupSlider.update();
+      showSlider(popupSliderBlock);
+      startHistorySlider(popupSlider.slides[popupSlider.activeIndex]);
+    });
+  });
 }
 
-function removeChild(parent) {
-  while (parent.firstChild) {
-    parent.removeChild(parent.firstChild);
+popupSlider.on('slideChange', function () {
+  deleteSlider(popupSlider.slides[popupSlider.previousIndex]);
+  startHistorySlider(popupSlider.slides[popupSlider.activeIndex]);
+});
+
+function deleteSlider(beforeTargetItem) {
+  var elemSlider = beforeTargetItem.querySelector('.history-slider');
+
+  if (elemSlider) {
+    elemSlider.remove();
+  }
+
+  beforeTargetItem.querySelector('.popup-slider__preview').style.display = "block";
+}
+
+function startHistorySlider(targetItem) {
+  createSlider(targetItem);
+  var imagesForslider = getImagesForSlider(gSlider.slides[popupSlider.activeIndex], '.g-slider__hide-item');
+  var parentContainerSlider = targetItem.querySelector('.history-slider__container');
+  addNavSubItemSlider(parentContainerSlider);
+  addScrollBar(parentContainerSlider);
+  imagesForslider.forEach(function (el) {
+    var elemClone = el.cloneNode(true);
+    editClass(elemClone, 'g-slider__hide-item', 'history-slider__slide', 'swiper-slide');
+    targetItem.querySelector('.history-slider__wrap').appendChild(elemClone);
+  });
+  targetItem.querySelector('.popup-slider__preview').style.display = "none";
+  new Swiper('.history-slider__container', {
+    allowTouchMove: false,
+    slideActiveClass: 'swiper-slide-active-history',
+    autoplay: {
+      delay: 3000
+    },
+    navigation: {
+      nextEl: '.popup-slider__nav-next',
+      prevEl: '.popup-slider__nav-prev'
+    },
+    scrollbar: {
+      el: ".swiper-scrollbar",
+      draggable: true
+    },
+    slidesPerView: 1,
+    nested: true
+  });
+}
+
+function createPreviewSlide(elem) {
+  var elemChildPreviewClone = elem.cloneNode(true);
+  var elemSlide = createElement('div', 'popup-slider__slide', 'swiper-slide');
+  editClass(elemChildPreviewClone, 'g-slider__preview', 'popup-slider__preview');
+  elemSlide.appendChild(elemChildPreviewClone);
+  popupSliderWrap.appendChild(elemSlide);
+  popupSlider.update();
+}
+
+function getImagesForSlider(elem, searchClass) {
+  return elem.querySelectorAll(searchClass);
+}
+
+function createSlider(parent) {
+  var elem = "\n  <div class=\"history-slider popup-slider__history-slider\">\n  <div class=\"history-slider__container swiper-container\">\n      <div class=\"history-slider__wrap swiper-wrapper\">\n      </div>\n  </div>\n</div>";
+  parent.insertAdjacentHTML('afterbegin', elem);
+}
+
+function addNavSubItemSlider(parent) {
+  var subElem = "\n  <div class=\"popup-slider__nav popup-slider__nav-prev\"></div>\n  <div class=\"popup-slider__nav popup-slider__nav-next\"></div>";
+  parent.insertAdjacentHTML('afterbegin', subElem);
+}
+
+function addScrollBar(parent) {
+  var subElem = "\n  <div class=\"swiper-scrollbar\"></div>\n  ";
+  parent.insertAdjacentHTML('afterbegin', subElem);
+}
+
+function editClass(elem, classOld, classNew, classSlider) {
+  elem.classList.remove(classOld);
+  elem.classList.add(classNew);
+
+  if (classSlider) {
+    elem.classList.add(classSlider);
   }
 }
 

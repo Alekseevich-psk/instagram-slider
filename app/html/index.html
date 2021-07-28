@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="/assets/template/css/style.min.css">
     <title>Gulp_build</title>
 </head>
+
 <body>
     <section class="g-slider">
         <div class="container">
@@ -19,19 +21,38 @@
                 <div class="g-slider__wrapper swiper-wrapper">
                     <div class="g-slider__slide swiper-slide">
                         <img src="/assets/template/images/var_1-small.jpeg" alt="">
+                        <div class="g-slider__preview">
+                            <img src="/assets/template/images/var_1-big.jpeg" alt="">
+                        </div>
                         <div class="g-slider__hide-wrap">
-                            <img src="/assets/template/images/var_1-big.jpeg" alt="">
-                            <img src="/assets/template/images/var_2-big.jpeg" alt="">
-                            <img src="/assets/template/images/var_1-big.jpeg" alt="">
-                            <img src="/assets/template/images/var_2-big.jpeg" alt="">
-                            <img src="/assets/template/images/var_1-big.jpeg" alt="">
+                            <div class="g-slider__hide-item">
+                                <img src="/assets/template/images/var_1-big.jpeg" alt="">
+                                <a href="#" class="popup-slider__slide-btn">Подробнее</a>
+                            </div>
+                            <div class="g-slider__hide-item">
+                                <img src="/assets/template/images/var_1-big.jpeg" alt="">
+                                <a href="#" class="popup-slider__slide-btn">Подробнее</a>
+                            </div>
+                            <div class="g-slider__hide-item">
+                                <img src="/assets/template/images/var_1-big.jpeg" alt="">
+                                <a href="#" class="popup-slider__slide-btn">Подробнее</a>
+                            </div>
                         </div>
                     </div>
                     <div class="g-slider__slide swiper-slide">
                         <img src="/assets/template/images/var_2-small.jpeg" alt="">
-                        <div class="g-slider__hide-wrap">
-                            <img src="/assets/template/images/var_1-big.jpeg" alt="">
+                        <div class="g-slider__preview">
                             <img src="/assets/template/images/var_2-big.jpeg" alt="">
+                        </div>
+                        <div class="g-slider__hide-wrap">
+                            <div class="g-slider__hide-item">
+                                <img src="/assets/template/images/var_2-big.jpeg" alt="">
+                                <a href="#" class="popup-slider__slide-btn">Подробнее</a>
+                            </div>
+                            <div class="g-slider__hide-item">
+                                <img src="/assets/template/images/var_2-big.jpeg" alt="">
+                                <a href="#" class="popup-slider__slide-btn">Подробнее</a>
+                            </div>
                         </div>
                     </div>
                     <div class="g-slider__slide swiper-slide">
@@ -69,13 +90,14 @@
             <div class="popup-slider">
                 <span class="popup-slider__close">@@include('./svg/close.svg')</span>
                 <div class="popup-slider__container swiper-container">
-                   <div class="popup-slider__wrap swiper-wrapper">
+                    <div class="popup-slider__wrap swiper-wrapper">
                     </div>
                 </div>
             </div>
         </div>
     </section>
-<script src="/assets/template/libs/libs.min.js"></script>
-<script src="/assets/template/js/scripts.min.js"></script>
+    <script src="/assets/template/libs/libs.min.js"></script>
+    <script src="/assets/template/js/scripts.min.js"></script>
 </body>
+
 </html>
