@@ -35,12 +35,14 @@
     }
 
     &__slide {
-        // max-height: 78.5vh;
         transition: 0.2s;
+        margin-right: 6%;
+        margin-left: 6%;
         z-index: 3;
+        max-width: 440px;
     }
 
-    &__preview{
+    &__preview {
         img {
             display: block;
             width: 100%;
@@ -55,13 +57,14 @@
         position: absolute;
         bottom: 2%;
         left: 15%;
-        padding: 12px;
+        padding: 9px 0px 10px;
         width: 70%;
         color: #fff;
         font-size: 14px;
         text-align: center;
         border-radius: 4px;
         letter-spacing: 0.5px;
+        transition: 0.24s;
 
         &:hover {
             background-color: rgb(83, 6, 184);
@@ -69,10 +72,11 @@
 
         &:active {
             background-color: rgb(52, 4, 114);
+            color: rgb(165, 165, 165);;
         }
     }
 
-    &__progress-bar{
+    &__progress-bar {
         display: flex;
         position: absolute;
         top: 3%;
@@ -109,7 +113,7 @@
         z-index: 6;
         top: 0;
         width: 50%;
-        height: 100%;
+        height: 90%;
         background-color: transparent;
     }
 
@@ -121,9 +125,31 @@
         right: 0;
     }
 
-    .swiper-scrollbar{
+    &__slide-header {
+        position: absolute;
+        top: 20px;
+        left: 12px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+
+        img {
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        p {
+            color: #fff;
+            font-size: 14px;
+        }
+    }
+
+    .swiper-scrollbar {
         background-color: rgba(255, 255, 255, 0.212);
         top: 7px;
+        height: 3px;
 
         .swiper-scrollbar-drag {
             background-color: #fff;
@@ -136,7 +162,6 @@
     }
 
     .swiper-slide-active {
-        // height: 88vh;
         transform: scale(1.1);
     }
 
@@ -149,4 +174,49 @@
 .show-slider {
     opacity: 1;
     visibility: visible;
+}
+
+@media(max-width: 1440px) {
+    .popup-slider {
+        &__close {
+            top: 12px;
+            right: 16px;
+            svg {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        &__wrap {
+            padding: 52px 0;
+        }
+        .swiper-slide-active {
+            transform: scale(1);
+        }
+    }
+    
+}
+
+@media(max-height: 900px) {
+    .popup-slider {
+        &__slide {
+            width: 320px;
+        }
+    }
+}
+
+@media(max-height: 800px) {
+    .popup-slider {
+        &__slide {
+            width: 300px;
+        }
+    }
+}
+
+@media(max-height: 600px) {
+    .popup-slider {
+        &__slide {
+            width: 280px;
+        }
+    }
 }

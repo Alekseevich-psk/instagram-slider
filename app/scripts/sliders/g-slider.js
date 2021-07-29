@@ -1,87 +1,92 @@
-const elemSlideTarget = document.querySelectorAll('.g-slider__slide');
-const closePopupSlider = document.querySelector('.popup-slider__close');
-const popupSliderBlock = document.querySelector('.popup-slider');
-const popupSliderWrap = document.querySelector('.popup-slider__wrap');
+const $elemSlideTarget = document.querySelectorAll('.g-slider__slide');
+const $closePopupSlider = document.querySelector('.popup-slider__close');
+const $popupSliderBlock = document.querySelector('.popup-slider');
+const $popupSliderWrap = document.querySelector('.popup-slider__wrap');
 
-const gSlider = new Swiper('.g-slider__container', {
-  slidesPerView: 7,
+const $gSlider = new Swiper('.g-slider__container', {
   slideToClickedSlide: true,
+  slidesPerView: 'auto',
+  preloadImages: false,
+  lazy: {
+    loadPrevNext: false,
+  },
   spaceBetween: 30,
   navigation: {
     nextEl: ".g-slider__arrow-next",
     prevEl: ".g-slider__arrow-prev",
   },
-});
-
-const popupSlider = new Swiper('.popup-slider__container', {
-  slideToClickedSlide: true,
-  centeredSlides: true,
   breakpoints: {
     320: {
-      slidesPerView: 1.8,
-      spaceBetween: 20
+      spaceBetween: 15,
     },
-    480: {
-      slidesPerView: 3,
-      spaceBetween: 30
-    },
-    960: {
-      slidesPerView: 3,
-      spaceBetween: 160
+    728: {
+      spaceBetween: 30,
     }
   }
 });
 
-if (closePopupSlider) {
-  closePopupSlider.addEventListener('click', () => {
-    hideSlider(popupSliderBlock);
-    deleteSlider(popupSlider.slides[popupSlider.activeIndex]);
+const $popupSlider = new Swiper('.popup-slider__container', {
+  slideToClickedSlide: true,
+  centeredSlides: true,
+  slidesPerView: 'auto',
+  preloadImages: false,
+  lazy: true,
+});
+
+if ($closePopupSlider) {
+  $closePopupSlider.addEventListener('click', () => {
+    hideSlider($popupSliderBlock);
+    deleteSlider($popupSlider.slides[$popupSlider.activeIndex]);
   })
 }
 
-if (elemSlideTarget.length != 0) {
-  elemSlideTarget.forEach(elem => {
-    const elemChildPreview = elem.querySelector('.g-slider__preview');
-    if (elemChildPreview) {
-      createPreviewSlide(elemChildPreview)
+if ($elemSlideTarget.length != 0) {
+  $elemSlideTarget.forEach(elem => {
+    const $elemChildPreview = elem.querySelector('.g-slider__preview');
+    const $elemChildHeaderSlide = elem.querySelector('.g-slider__slide-header');
+
+    if ($elemChildPreview) {
+      const elemSlide = createElement('div', 'popup-slider__slide', 'swiper-slide');
+      createPreviewSlide(elemSlide, $elemChildPreview);
+      createHeaderSlide(elemSlide, $elemChildHeaderSlide);
     }
+
     elem.addEventListener('click', () => {
-      popupSlider.activeIndex = gSlider.activeIndex;
-      popupSlider.update();
-      showSlider(popupSliderBlock);
-      startHistorySlider(popupSlider.slides[popupSlider.activeIndex]);
+      $popupSlider.activeIndex = $gSlider.activeIndex;
+      $popupSlider.update();
+      showSlider($popupSliderBlock);
+      startHistorySlider($popupSlider.slides[$popupSlider.activeIndex]);
     })
   })
 }
 
-popupSlider.on('slideChange', function () {
-  deleteSlider(popupSlider.slides[popupSlider.previousIndex]);
-  startHistorySlider(popupSlider.slides[popupSlider.activeIndex]);
+$popupSlider.on('slideChange', function () {
+  deleteSlider($popupSlider.slides[$popupSlider.previousIndex]);
+  startHistorySlider($popupSlider.slides[$popupSlider.activeIndex]);
 });
 
-
 function deleteSlider(beforeTargetItem) {
-  let elemSlider = beforeTargetItem.querySelector('.history-slider');
-  if(elemSlider) {
-    elemSlider.remove();
+  const $elemSlider = beforeTargetItem.querySelector('.history-slider');
+  if($elemSlider) {
+    $elemSlider.remove();
   }
   beforeTargetItem.querySelector('.popup-slider__preview').style.display = "block";
 }
 
 function startHistorySlider(targetItem) {
   createSlider(targetItem);
-  const imagesForslider = getImagesForSlider(gSlider.slides[popupSlider.activeIndex], '.g-slider__hide-item');
-  let parentContainerSlider = targetItem.querySelector('.history-slider__container');
-  addNavSubItemSlider(parentContainerSlider);
-  addScrollBar(parentContainerSlider);
 
-  imagesForslider.forEach(el => {
-    let elemClone = el.cloneNode(true);
-    editClass(elemClone, 'g-slider__hide-item', 'history-slider__slide', 'swiper-slide');
-    targetItem.querySelector('.history-slider__wrap').appendChild(elemClone);
-  })
+  const $imagesForslider = getImagesForSlider($gSlider.slides[$popupSlider.activeIndex], '.g-slider__hide-item');
+  const $parentContainerSlider = targetItem.querySelector('.history-slider__container');
+
+  addNavSubItemSlider($parentContainerSlider);
+  addScrollBar($parentContainerSlider);
+  addHederSlide($parentContainerSlider);
+
+  setImagesForslider($imagesForslider, targetItem);
 
   targetItem.querySelector('.popup-slider__preview').style.display = "none";
+
   new Swiper('.history-slider__container', {
     allowTouchMove: false,
     slideActiveClass: 'swiper-slide-active-history',
@@ -101,14 +106,27 @@ function startHistorySlider(targetItem) {
   });
 }
 
-function createPreviewSlide(elem) {
-  const elemChildPreviewClone = elem.cloneNode(true);
-  const elemSlide = createElement('div', 'popup-slider__slide', 'swiper-slide');
+function setImagesForslider(images, elemTarget) {
+  images.forEach(el => {
+    let elemClone = el.cloneNode(true);
+    editClass(elemClone, 'g-slider__hide-item', 'history-slider__slide', 'swiper-slide');
+    elemTarget.querySelector('.history-slider__wrap').appendChild(elemClone);
+  })
+}
 
-  editClass(elemChildPreviewClone, 'g-slider__preview', 'popup-slider__preview');
-  elemSlide.appendChild(elemChildPreviewClone);
-  popupSliderWrap.appendChild(elemSlide);
-  popupSlider.update();
+function createPreviewSlide(slide, elem) {
+  const $elemChildPreviewClone = elem.cloneNode(true);
+  editClass($elemChildPreviewClone, 'g-slider__preview', 'popup-slider__preview');
+  slide.appendChild($elemChildPreviewClone);
+  $popupSliderWrap.appendChild(slide);
+}
+
+function createHeaderSlide(slide, elem) {
+  const $elemChildHeaderSlide = elem.cloneNode(true);
+  editClass($elemChildHeaderSlide, 'g-slider__slide-header', 'popup-slider__slide-header');
+  slide.appendChild($elemChildHeaderSlide);
+  $popupSliderWrap.appendChild(slide);
+  $popupSlider.update();
 }
 
 function getImagesForSlider(elem, searchClass) {
@@ -116,7 +134,7 @@ function getImagesForSlider(elem, searchClass) {
 }
 
 function createSlider(parent) {
-  const elem = `
+  const $elem = `
   <div class="history-slider popup-slider__history-slider">
   <div class="history-slider__container swiper-container">
       <div class="history-slider__wrap swiper-wrapper">
@@ -124,21 +142,28 @@ function createSlider(parent) {
   </div>
 </div>`;
 
-  parent.insertAdjacentHTML('afterbegin', elem);
+  parent.insertAdjacentHTML('afterbegin', $elem);
+}
+
+function addHederSlide(parent){
+  const $subElem = `
+  <div class="popup-slider__slide-header">
+  </div>`;
+  parent.insertAdjacentHTML('afterbegin', $subElem);
 }
 
 function addNavSubItemSlider(parent) {
-  const subElem = `
+  const $subElem = `
   <div class="popup-slider__nav popup-slider__nav-prev"></div>
   <div class="popup-slider__nav popup-slider__nav-next"></div>`;
-  parent.insertAdjacentHTML('afterbegin', subElem);
+  parent.insertAdjacentHTML('afterbegin', $subElem);
 }
 
 function addScrollBar(parent){
-  const subElem = `
+  const $subElem = `
   <div class="swiper-scrollbar"></div>
   `
-  parent.insertAdjacentHTML('afterbegin', subElem);
+  parent.insertAdjacentHTML('afterbegin', $subElem);
 }
 
 function editClass(elem, classOld, classNew, classSlider) {

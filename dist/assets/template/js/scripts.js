@@ -1,71 +1,75 @@
 "use strict";
 
-var elemSlideTarget = document.querySelectorAll('.g-slider__slide');
-var closePopupSlider = document.querySelector('.popup-slider__close');
-var popupSliderBlock = document.querySelector('.popup-slider');
-var popupSliderWrap = document.querySelector('.popup-slider__wrap');
-var gSlider = new Swiper('.g-slider__container', {
-  slidesPerView: 7,
+var $elemSlideTarget = document.querySelectorAll('.g-slider__slide');
+var $closePopupSlider = document.querySelector('.popup-slider__close');
+var $popupSliderBlock = document.querySelector('.popup-slider');
+var $popupSliderWrap = document.querySelector('.popup-slider__wrap');
+var $gSlider = new Swiper('.g-slider__container', {
   slideToClickedSlide: true,
+  slidesPerView: 'auto',
+  preloadImages: false,
+  lazy: {
+    loadPrevNext: false
+  },
   spaceBetween: 30,
   navigation: {
     nextEl: ".g-slider__arrow-next",
     prevEl: ".g-slider__arrow-prev"
-  }
-});
-var popupSlider = new Swiper('.popup-slider__container', {
-  slideToClickedSlide: true,
-  centeredSlides: true,
+  },
   breakpoints: {
     320: {
-      slidesPerView: 1.8,
-      spaceBetween: 20
+      spaceBetween: 15
     },
-    480: {
-      slidesPerView: 3,
+    728: {
       spaceBetween: 30
-    },
-    960: {
-      slidesPerView: 3,
-      spaceBetween: 160
     }
   }
 });
+var $popupSlider = new Swiper('.popup-slider__container', {
+  slideToClickedSlide: true,
+  centeredSlides: true,
+  slidesPerView: 'auto',
+  preloadImages: false,
+  lazy: true
+});
 
-if (closePopupSlider) {
-  closePopupSlider.addEventListener('click', function () {
-    hideSlider(popupSliderBlock);
-    deleteSlider(popupSlider.slides[popupSlider.activeIndex]);
+if ($closePopupSlider) {
+  $closePopupSlider.addEventListener('click', function () {
+    hideSlider($popupSliderBlock);
+    deleteSlider($popupSlider.slides[$popupSlider.activeIndex]);
   });
 }
 
-if (elemSlideTarget.length != 0) {
-  elemSlideTarget.forEach(function (elem) {
-    var elemChildPreview = elem.querySelector('.g-slider__preview');
+if ($elemSlideTarget.length != 0) {
+  $elemSlideTarget.forEach(function (elem) {
+    var $elemChildPreview = elem.querySelector('.g-slider__preview');
+    var $elemChildHeaderSlide = elem.querySelector('.g-slider__slide-header');
 
-    if (elemChildPreview) {
-      createPreviewSlide(elemChildPreview);
+    if ($elemChildPreview) {
+      var elemSlide = createElement('div', 'popup-slider__slide', 'swiper-slide');
+      createPreviewSlide(elemSlide, $elemChildPreview);
+      createHeaderSlide(elemSlide, $elemChildHeaderSlide);
     }
 
     elem.addEventListener('click', function () {
-      popupSlider.activeIndex = gSlider.activeIndex;
-      popupSlider.update();
-      showSlider(popupSliderBlock);
-      startHistorySlider(popupSlider.slides[popupSlider.activeIndex]);
+      $popupSlider.activeIndex = $gSlider.activeIndex;
+      $popupSlider.update();
+      showSlider($popupSliderBlock);
+      startHistorySlider($popupSlider.slides[$popupSlider.activeIndex]);
     });
   });
 }
 
-popupSlider.on('slideChange', function () {
-  deleteSlider(popupSlider.slides[popupSlider.previousIndex]);
-  startHistorySlider(popupSlider.slides[popupSlider.activeIndex]);
+$popupSlider.on('slideChange', function () {
+  deleteSlider($popupSlider.slides[$popupSlider.previousIndex]);
+  startHistorySlider($popupSlider.slides[$popupSlider.activeIndex]);
 });
 
 function deleteSlider(beforeTargetItem) {
-  var elemSlider = beforeTargetItem.querySelector('.history-slider');
+  var $elemSlider = beforeTargetItem.querySelector('.history-slider');
 
-  if (elemSlider) {
-    elemSlider.remove();
+  if ($elemSlider) {
+    $elemSlider.remove();
   }
 
   beforeTargetItem.querySelector('.popup-slider__preview').style.display = "block";
@@ -73,15 +77,12 @@ function deleteSlider(beforeTargetItem) {
 
 function startHistorySlider(targetItem) {
   createSlider(targetItem);
-  var imagesForslider = getImagesForSlider(gSlider.slides[popupSlider.activeIndex], '.g-slider__hide-item');
-  var parentContainerSlider = targetItem.querySelector('.history-slider__container');
-  addNavSubItemSlider(parentContainerSlider);
-  addScrollBar(parentContainerSlider);
-  imagesForslider.forEach(function (el) {
-    var elemClone = el.cloneNode(true);
-    editClass(elemClone, 'g-slider__hide-item', 'history-slider__slide', 'swiper-slide');
-    targetItem.querySelector('.history-slider__wrap').appendChild(elemClone);
-  });
+  var $imagesForslider = getImagesForSlider($gSlider.slides[$popupSlider.activeIndex], '.g-slider__hide-item');
+  var $parentContainerSlider = targetItem.querySelector('.history-slider__container');
+  addNavSubItemSlider($parentContainerSlider);
+  addScrollBar($parentContainerSlider);
+  addHederSlide($parentContainerSlider);
+  setImagesForslider($imagesForslider, targetItem);
   targetItem.querySelector('.popup-slider__preview').style.display = "none";
   new Swiper('.history-slider__container', {
     allowTouchMove: false,
@@ -102,13 +103,27 @@ function startHistorySlider(targetItem) {
   });
 }
 
-function createPreviewSlide(elem) {
-  var elemChildPreviewClone = elem.cloneNode(true);
-  var elemSlide = createElement('div', 'popup-slider__slide', 'swiper-slide');
-  editClass(elemChildPreviewClone, 'g-slider__preview', 'popup-slider__preview');
-  elemSlide.appendChild(elemChildPreviewClone);
-  popupSliderWrap.appendChild(elemSlide);
-  popupSlider.update();
+function setImagesForslider(images, elemTarget) {
+  images.forEach(function (el) {
+    var elemClone = el.cloneNode(true);
+    editClass(elemClone, 'g-slider__hide-item', 'history-slider__slide', 'swiper-slide');
+    elemTarget.querySelector('.history-slider__wrap').appendChild(elemClone);
+  });
+}
+
+function createPreviewSlide(slide, elem) {
+  var $elemChildPreviewClone = elem.cloneNode(true);
+  editClass($elemChildPreviewClone, 'g-slider__preview', 'popup-slider__preview');
+  slide.appendChild($elemChildPreviewClone);
+  $popupSliderWrap.appendChild(slide);
+}
+
+function createHeaderSlide(slide, elem) {
+  var $elemChildHeaderSlide = elem.cloneNode(true);
+  editClass($elemChildHeaderSlide, 'g-slider__slide-header', 'popup-slider__slide-header');
+  slide.appendChild($elemChildHeaderSlide);
+  $popupSliderWrap.appendChild(slide);
+  $popupSlider.update();
 }
 
 function getImagesForSlider(elem, searchClass) {
@@ -116,18 +131,23 @@ function getImagesForSlider(elem, searchClass) {
 }
 
 function createSlider(parent) {
-  var elem = "\n  <div class=\"history-slider popup-slider__history-slider\">\n  <div class=\"history-slider__container swiper-container\">\n      <div class=\"history-slider__wrap swiper-wrapper\">\n      </div>\n  </div>\n</div>";
-  parent.insertAdjacentHTML('afterbegin', elem);
+  var $elem = "\n  <div class=\"history-slider popup-slider__history-slider\">\n  <div class=\"history-slider__container swiper-container\">\n      <div class=\"history-slider__wrap swiper-wrapper\">\n      </div>\n  </div>\n</div>";
+  parent.insertAdjacentHTML('afterbegin', $elem);
+}
+
+function addHederSlide(parent) {
+  var $subElem = "\n  <div class=\"popup-slider__slide-header\">\n  </div>";
+  parent.insertAdjacentHTML('afterbegin', $subElem);
 }
 
 function addNavSubItemSlider(parent) {
-  var subElem = "\n  <div class=\"popup-slider__nav popup-slider__nav-prev\"></div>\n  <div class=\"popup-slider__nav popup-slider__nav-next\"></div>";
-  parent.insertAdjacentHTML('afterbegin', subElem);
+  var $subElem = "\n  <div class=\"popup-slider__nav popup-slider__nav-prev\"></div>\n  <div class=\"popup-slider__nav popup-slider__nav-next\"></div>";
+  parent.insertAdjacentHTML('afterbegin', $subElem);
 }
 
 function addScrollBar(parent) {
-  var subElem = "\n  <div class=\"swiper-scrollbar\"></div>\n  ";
-  parent.insertAdjacentHTML('afterbegin', subElem);
+  var $subElem = "\n  <div class=\"swiper-scrollbar\"></div>\n  ";
+  parent.insertAdjacentHTML('afterbegin', $subElem);
 }
 
 function editClass(elem, classOld, classNew, classSlider) {
