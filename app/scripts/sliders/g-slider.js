@@ -2,6 +2,7 @@ const $elemSlideTarget = document.querySelectorAll('.g-slider__slide');
 const $closePopupSlider = document.querySelector('.popup-slider__close');
 const $popupSliderBlock = document.querySelector('.popup-slider');
 const $popupSliderWrap = document.querySelector('.popup-slider__wrap');
+const $popupSliderContainer = document.querySelector('.popup-slider__container');
 
 const $gSlider = new Swiper('.g-slider__container', {
   slideToClickedSlide: true,
@@ -33,10 +34,17 @@ const $popupSlider = new Swiper('.popup-slider__container', {
   lazy: true,
 });
 
+if($popupSliderContainer) {
+  $popupSliderContainer.addEventListener('click', (e) => {
+    if(e.target.classList.contains('popup-slider__container') || e.target.classList.contains('popup-slider__wrap')) {
+      closeSlider();
+    }
+  })
+}
+
 if ($closePopupSlider) {
   $closePopupSlider.addEventListener('click', () => {
-    hideSlider($popupSliderBlock);
-    deleteSlider($popupSlider.slides[$popupSlider.activeIndex]);
+    closeSlider();
   })
 }
 
@@ -104,6 +112,11 @@ function startHistorySlider(targetItem) {
     slidesPerView: 1,
     nested: true,
   });
+}
+
+function closeSlider(){
+  hideSlider($popupSliderBlock);
+  deleteSlider($popupSlider.slides[$popupSlider.activeIndex]);
 }
 
 function setImagesForslider(images, elemTarget) {
